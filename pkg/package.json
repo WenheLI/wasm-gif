@@ -6,11 +6,17 @@
   "version": "0.0.1",
   "files": [
     "wasm_gif_bg.wasm",
+    "wasm_gif_bg.js",
     "wasm_gif.js",
     "wasm_gif.d.ts"
   ],
   "module": "wasm_gif.js",
   "types": "wasm_gif.d.ts",
   "sideEffects": false,
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "repository" : {
+    "type" : "git",
+    "url": "ssh://git@github.com/WenheLI/wasm-gif.git",
+    "directory": "pkg/"
+  }
 }
