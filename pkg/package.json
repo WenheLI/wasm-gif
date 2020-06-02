@@ -1,0 +1,16 @@
+{
+  "name": "wasm-gif",
+  "collaborators": [
+    "WenheLi <wl1508@nyu.edu>"
+  ],
+  "version": "0.0.1",
+  "files": [
+    "wasm_gif_bg.wasm",
+    "wasm_gif.js",
+    "wasm_gif.d.ts"
+  ],
+  "module": "wasm_gif.js",
+  "types": "wasm_gif.d.ts",
+  "sideEffects": false,
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+}
