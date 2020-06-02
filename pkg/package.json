@@ -1,5 +1,5 @@
 {
-  "name": "wasm-gif",
+  "name": "@wenheli/wasm-gif",
   "collaborators": [
     "WenheLi <wl1508@nyu.edu>"
   ],
@@ -13,7 +13,7 @@
   "module": "wasm_gif.js",
   "types": "wasm_gif.d.ts",
   "sideEffects": false,
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/WenheLI" },
   "repository" : {
     "type" : "git",
     "url": "ssh://git@github.com/WenheLI/wasm-gif.git",
