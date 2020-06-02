@@ -47,3 +47,11 @@ class FrameData {
     public delay: number
 }
 ```
+
+## Performance
+TODO
+
+## Roadmap
+- Full gif codec support inclduing config
+- Performance benchmarking & optimize
+- Pipeline
