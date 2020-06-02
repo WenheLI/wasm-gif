@@ -15,9 +15,18 @@ extern {
 }
 
 #[wasm_bindgen]
-pub struct Dimension {
+pub enum GifPlayMode {
+    REPEAT,
+    SINGLE
+}
+
+#[derive(Serialize, Deserialize)]
+struct GifData {
+    pub frames: Vec<FrameData>,
+    pub global_palette: Vec<u8>,
     pub width: u16,
-    pub heihgt: u16
+    pub height: u16
+    
 }
 
 #[derive(Serialize, Deserialize)]
@@ -61,32 +70,47 @@ pub fn decode(data: &[u8]) -> JsValue {
             }
         }
         let frame = FrameData {
-            width,
-            height,
             rgba: full_frame.clone(),
             delay: frame.delay,
+            width: frame.width,
+            height: frame.height
         };
         res.push(frame)
     }
-    JsValue::from_serde(&res).unwrap()
+    let gif = GifData {
+        width,
+        height,
+        global_palette: palette,
+        frames: res
+    };
+
+    JsValue::from_serde(&gif).unwrap()
     
 }
 
-// #[wasm_bindgen]
-// pub fn encode(data: &JsValue) {
-//     let frames: Vec<FrameData> = data.into_serde().unwrap();
+#[wasm_bindgen]
+pub fn encode(data: &JsValue, mode: GifPlayMode, times: Option<u16>) -> Vec<u8> {
+    let frames: GifData = data.into_serde().unwrap();
+    let mut buffer = Vec::new();
+    
+    {
+        let mut encoder = Encoder::new(&mut buffer, frames.width, frames.height, &frames.global_palette).unwrap();
+        match mode {
+            GifPlayMode::REPEAT => encoder.set(Repeat::Infinite),
+            GifPlayMode::SINGLE => encoder.set(Repeat::Finite(times.unwrap_or(1)))
+        }.unwrap();
+        for frame in frames.frames.iter() {
+            let mut temp_frame = Frame::from_rgba(frames.width, frames.height, &mut frame.rgba.to_vec());
+            temp_frame.delay = frame.delay;
+            encoder.write_frame(&temp_frame).unwrap();
+        }
+    }
 
-// }
+    buffer
+}
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, wams-gif!");
-}
