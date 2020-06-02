@@ -1,69 +1,49 @@
-<div align="center">
+# WASM-GIF-codec (WIP)
 
-  <h1><code>wasm-pack-template</code></h1>
+## Brief
+This library offers an open-to-use library that allows developers to decode and encode gifs without any pain.
 
-  <strong>A template for kick starting a Rust and WebAssembly project using <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</strong>
+This library is based on `Rust`, `WASM`, and `Wasm-pack`.
 
-  <p>
-    <a href="https://travis-ci.org/rustwasm/wasm-pack-template"><img src="https://img.shields.io/travis/rustwasm/wasm-pack-template.svg?style=flat-square" alt="Build Status" /></a>
-  </p>
+## Usage
+Currently, this library only supports `encoding` & `decoding` with little customization. In the following development, gif/image related operations and stream-based workflow will be introduced.
 
-  <h3>
-    <a href="https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html">Tutorial</a>
-    <span> | </span>
-    <a href="https://discordapp.com/channels/442252698964721669/443151097398296587">Chat</a>
-  </h3>
+### Encode
+```js
+    import * as wasm from "wasm-gif";
 
-  <sub>Built with 🦀🕸 by <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a></sub>
-</div>
+    // Fetch a gif online first
+    let req = await fetch("https://upload.wikimedia.org/wikipedia/commons/a/aa/SmallFullColourGIF.gif");
+    // get the `uint8 array` from the request
+    let ab = await req.arrayBuffer();
+    let u8 = new Uint8Array(ab);
 
-## About
-
-[**📚 Read this template tutorial! 📚**][template-docs]
-
-This template is designed for compiling Rust libraries into WebAssembly and
-publishing the resulting package to NPM.
-
-Be sure to check out [other `wasm-pack` tutorials online][tutorials] for other
-templates and usages of `wasm-pack`.
-
-[tutorials]: https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html
-[template-docs]: https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html
-
-## 🚴 Usage
-
-### 🐑 Use `cargo generate` to Clone this Template
-
-[Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
-
-```
-cargo generate --git https://github.com/rustwasm/wasm-pack-template.git --name my-project
-cd my-project
+    const res = wasm.decode(u8);
 ```
 
-### 🛠️ Build with `wasm-pack build`
-
+### Decode
+```js
+    // res is an unpacked gif, encoded in Js Object format
+    const data = wasm.encode(res, wasm.GifPlayMode.REPEAT, 1)
+    // convert binary to blob object
+    const url = URL.createObjectURL(new Blob([data], {type:"image/gif"}));
+    console.log(url)
 ```
-wasm-pack build
+### Object Structure
+Due to the limitation of `wasm_bindgen` complex objects can not directly get casted into `TypeScript` object. Therefore, it returns `any` in the function signature. I will explicitly post the structure here, until a solution is discovered.
+```ts
+
+class GifData {
+    public frame: Array<FrameData>,
+    public global_palette: Uint8Array,
+    public width: number,
+    public height: number
+}
+
+class FrameData {
+    public width: number,
+    public height: number,
+    public rgba: Uint8Array,
+    public delay: number
+}
 ```
-
-### 🔬 Test in Headless Browsers with `wasm-pack test`
-
-```
-wasm-pack test --headless --firefox
-```
-
-### 🎁 Publish to NPM with `wasm-pack publish`
-
-```
-wasm-pack publish
-```
-
-## 🔋 Batteries Included
-
-* [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) for communicating
-  between WebAssembly and JavaScript.
-* [`console_error_panic_hook`](https://github.com/rustwasm/console_error_panic_hook)
-  for logging panic messages to the developer console.
-* [`wee_alloc`](https://github.com/rustwasm/wee_alloc), an allocator optimized
-  for small code size.
